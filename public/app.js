@@ -7,6 +7,7 @@ async function initPortal() {
 
         renderServers(spec.servers);
         renderEndpoints(spec.paths);
+        updateRateLimitBadge(docsRes);
 
         const badge = document.querySelector('.badge:not(.online)');
         if (badge && spec.openapi) {
@@ -321,35 +322,7 @@ async function execute(path, method, status, btn) {
 
     try {
         const res = await fetch(requestUrl, options);
-
-        // Extract Rate Limit Headers
-        const limit = res.headers.get('x-ratelimit-limit');
-        const remaining = res.headers.get('x-ratelimit-remaining');
-
-        if (limit && remaining) {
-            const rlBadge = document.getElementById('rate-limit-badge');
-            if (rlBadge) {
-                rlBadge.style.display = 'inline-block';
-                rlBadge.textContent = `RATE LIMIT: ${remaining}/${limit}`;
-
-                if (remaining === 'UNLIMITED') {
-                    rlBadge.style.background = 'var(--green)';
-                    rlBadge.style.color = 'var(--black)';
-                } else {
-                    const percent = (parseInt(remaining) / parseInt(limit)) * 100;
-                    if (percent <= 20) {
-                        rlBadge.style.background = 'var(--red)';
-                        rlBadge.style.color = 'var(--white)';
-                    } else if (percent <= 50) {
-                        rlBadge.style.background = 'var(--orange)';
-                        rlBadge.style.color = 'var(--black)';
-                    } else {
-                        rlBadge.style.background = 'var(--yellow)';
-                        rlBadge.style.color = 'var(--black)';
-                    }
-                }
-            }
-        }
+        updateRateLimitBadge(res);
 
         let data;
         const contentType = res.headers.get("content-type");
@@ -369,7 +342,7 @@ async function execute(path, method, status, btn) {
         link.textContent = method.toUpperCase() + ' ' + requestUrl.toUpperCase();
     } catch (e) {
         container.style.display = 'block';
-        pre.textContent = '// ERROR: ' + e.message;
+        pre.textContent = '/* ERROR: ' + e.message + ' */';
     } finally {
         btn.classList.remove('glitch-loading');
         btn.textContent = 'Execute';
@@ -418,6 +391,36 @@ function syntaxHighlight(json) {
         }
         return '<span class="' + cls + '">' + match + '</span>';
     });
+}
+
+function updateRateLimitBadge(res) {
+    const limit = res.headers.get('x-ratelimit-limit');
+    const remaining = res.headers.get('x-ratelimit-remaining');
+
+    if (limit && remaining) {
+        const rlBadge = document.getElementById('rate-limit-badge');
+        if (rlBadge) {
+            rlBadge.style.display = 'inline-block';
+            rlBadge.textContent = `RATE LIMIT: ${remaining}/${limit}`;
+
+            if (remaining === 'UNLIMITED') {
+                rlBadge.style.background = 'var(--green)';
+                rlBadge.style.color = 'var(--black)';
+            } else {
+                const percent = (parseInt(remaining) / parseInt(limit)) * 100;
+                if (percent <= 20) {
+                    rlBadge.style.background = 'var(--red)';
+                    rlBadge.style.color = 'var(--white)';
+                } else if (percent <= 50) {
+                    rlBadge.style.background = 'var(--orange)';
+                    rlBadge.style.color = 'var(--black)';
+                } else {
+                    rlBadge.style.background = 'var(--yellow)';
+                    rlBadge.style.color = 'var(--black)';
+                }
+            }
+        }
+    }
 }
 
 document.addEventListener('keydown', (e) => {
