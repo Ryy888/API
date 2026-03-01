@@ -185,44 +185,61 @@ function renderEndpoints(paths) {
     const list = document.getElementById('endpoint-list');
     let html = '';
 
+    const favorites = getFavorites();
+    const favEndpoints = [];
+
     const groups = {};
     for (const [path, methods] of Object.entries(paths)) {
         for (const [method, details] of Object.entries(methods)) {
             const tag = (details.tags && details.tags.length > 0) ? details.tags[0] : 'Default';
             if (!groups[tag]) groups[tag] = [];
-            groups[tag].push({ path, method, details });
+            const ep = { path, method, details };
+            groups[tag].push(ep);
+
+            if (isFavorite(path, method)) favEndpoints.push(ep);
         }
     }
 
+    if (favEndpoints.length > 0) {
+        html += renderTagGroup('FAVORITES', favEndpoints);
+    }
+
     for (const [tag, endpoints] of Object.entries(groups)) {
-        html += `
+        html += renderTagGroup(tag, endpoints);
+    }
+    list.innerHTML = html;
+}
+
+function renderTagGroup(tag, endpoints) {
+    let html = `
         <div class="tag-group-header" onclick="toggleCategory(this)" style="cursor: pointer; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; font-size: 1.2rem; font-weight: 800; background: var(--white); color: var(--black); padding: 15px 20px; margin-top: 1.5rem; margin-bottom: 1rem; border: 4px solid var(--black); box-shadow: 6px 6px 0px var(--black); text-transform: uppercase;">
             <span style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-                <span style="background: var(--magenta); color: #fff; padding: 4px 8px; font-size: 0.8rem; font-weight: 900; box-shadow: 2px 2px 0 var(--black); border: 2px solid var(--black);">TAG</span>
+                <span style="background: var(--magenta); color: #fff; padding: 4px 8px; font-size: 0.8rem; font-weight: 900; box-shadow: 2px 2px 0 var(--black); border: 2px solid var(--black);">${tag === 'FAVORITES' ? '⭐' : 'TAG'}</span>
                 <span style="word-break: break-all;">${tag}</span>
             </span>
             <span class="cat-arrow" style="transition: transform 0.3s; font-size: 1.5rem; transform: rotate(-90deg);">▼</span>
         </div>
         <div class="tag-group-content">`;
 
-        endpoints.forEach(({ path, method, details }) => {
-            const methodClass = method.toLowerCase();
-            const hasBody = details.requestBody;
-            const status = details['x-status'] || 'ONLINE';
-            const statusColor = getStatusColor(status);
+    endpoints.forEach(({ path, method, details }) => {
+        const methodClass = method.toLowerCase();
+        const hasBody = details.requestBody;
+        const status = details['x-status'] || 'ONLINE';
+        const statusColor = getStatusColor(status);
 
-            html += `
+        html += `
                 <div class="op-block" data-path="${path}" style="box-shadow: 4px 4px 0px var(--black);">
                     <div class="op-sum" onclick="toggle(this)">
                         <span class="method ${methodClass}">${method}</span>
                         <span class="path">${path}</span>
+                        <span class="favorite-star" onclick="toggleFavorite('${path}', '${method}', event)" style="cursor: pointer; font-size: 1.2rem; margin-left: 10px; transition: 0.2s;" title="Add to Favorites">${isFavorite(path, method) ? '⭐' : '☆'}</span>
                         <span class="status-badge" style="background:${statusColor}">${status}</span>
                         <span class="summary">${details.summary || ''}</span>
                         <span class="op-arrow">▼</span>
                     </div>
                     <div class="op-content">
                         <div class="op-inner">
-                            <div style="display: flex; justify-content: flex-end; margin-bottom: 5px;">
+                            <div style="display: flex; justify-content: flex-end; margin-bottom: 5px; gap: 10px;">
                                 <span class="badge rate-limit-status" style="background: var(--yellow); color: var(--black); font-size: 0.7rem; padding: 4px 8px;">RATE LIMIT: ...</span>
                             </div>
                             <p class="op-desc">${details.description || 'No description provided.'}</p>
@@ -231,6 +248,19 @@ function renderEndpoints(paths) {
                             <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                                 <button class="try-btn" onclick="execute('${path}', '${method}', '${status}', this)">Execute</button>
                                 <button class="try-btn" style="background: var(--blue); color: #fff; box-shadow: 4px 4px 0 var(--black);" onclick="shareApi('${path}', this)">Share API</button>
+                                <button class="try-btn" style="background: var(--orange); color: #000; box-shadow: 4px 4px 0 var(--black);" onclick="toggleSnippets(this, '${path}', '${method}')">Generate Code</button>
+                            </div>
+                            <div class="snippet-box" style="display: none; margin-top: 15px; border: 3px solid var(--black); padding: 15px; background: var(--white); box-shadow: 4px 4px 0 var(--magenta);">
+                                <div class="snippet-header" style="display: flex; gap: 10px; border-bottom: 2px solid var(--black); padding-bottom: 8px; margin-bottom: 10px;">
+                                    <button class="snippet-tab active" onclick="switchSnippet(this, 'curl')">cURL</button>
+                                    <button class="snippet-tab" onclick="switchSnippet(this, 'fetch')">Fetch</button>
+                                    <button class="snippet-tab" onclick="switchSnippet(this, 'python')">Python</button>
+                                </div>
+                                <div class="snippet-content">
+                                    <pre class="curl-code" style="color: var(--black); background: #f0f0f0; padding: 10px; border: 1px solid #ccc;"></pre>
+                                    <pre class="fetch-code" style="display: none; color: var(--black); background: #f0f0f0; padding: 10px; border: 1px solid #ccc;"></pre>
+                                    <pre class="python-code" style="display: none; color: var(--black); background: #f0f0f0; padding: 10px; border: 1px solid #ccc;"></pre>
+                                </div>
                             </div>
                             <div class="response-box">
                                 <div class="res-header">JSON RESPONSE</div>
@@ -247,10 +277,9 @@ function renderEndpoints(paths) {
                         </div>
                     </div>
                 </div>`;
-        });
-        html += `</div>`;
-    }
-    list.innerHTML = html;
+    });
+    html += `</div>`;
+    return html;
 }
 
 function toggleCategory(el) {
@@ -516,6 +545,90 @@ function filterJsonResponse(btn) {
     } catch (e) {
         showToast('FILTER ERROR', 'error');
     }
+}
+
+function toggleFavorite(path, method, event) {
+    if (event) event.stopPropagation();
+    const favorites = getFavorites();
+    const key = `${method}:${path}`;
+    const idx = favorites.indexOf(key);
+    if (idx > -1) {
+        favorites.splice(idx, 1);
+        showToast('REMOVED FROM FAVORITES', 'info');
+    } else {
+        favorites.push(key);
+        showToast('ADDED TO FAVORITES', 'success');
+    }
+    localStorage.setItem('favorites', JSON.stringify(favorites));
+    /* Reload to update the FAVORITES group */
+    location.reload();
+}
+
+function getFavorites() {
+    return JSON.parse(localStorage.getItem('favorites') || '[]');
+}
+
+function isFavorite(path, method) {
+    return getFavorites().includes(`${method}:${path}`);
+}
+
+function toggleSnippets(btn, path, method) {
+    const wrapper = btn.closest('.op-inner');
+    const snippetBox = wrapper.querySelector('.snippet-box');
+    if (snippetBox.style.display === 'none') {
+        /* Generate content */
+        const queryParams = Array.from(wrapper.querySelectorAll('.params-grid .param-input')).map(input => {
+            return `${input.placeholder}=${encodeURIComponent(input.value)}`;
+        }).join('&');
+        const finalPath = queryParams ? `${path}?${queryParams}` : path;
+        const bodyValue = wrapper.querySelector('.body-input')?.value;
+
+        const server = document.getElementById('server-select').value;
+        const baseUrl = server.endsWith('/') ? server.slice(0, -1) : server;
+        const fullUrl = `${baseUrl}${finalPath}`;
+
+        /* curl */
+        let curl = `curl -X ${method.toUpperCase()} "${fullUrl}"`;
+        if (bodyValue) curl += ` \\\n  -H "Content-Type: application/json" \\\n  -d '${bodyValue}'`;
+        snippetBox.querySelector('.curl-code').textContent = curl;
+
+        /* fetch */
+        let fetchCode = `fetch("${fullUrl}", {\n  method: "${method.toUpperCase()}"`;
+        if (bodyValue) fetchCode += `,\n  headers: { "Content-Type": "application/json" },\n  body: JSON.stringify(${bodyValue})`;
+        fetchCode += `\n}).then(res => res.json()).then(console.log);`;
+        snippetBox.querySelector('.fetch-code').textContent = fetchCode;
+
+        /* python */
+        let python = `import requests\n\nurl = "${fullUrl}"\nresponse = requests.${method.toLowerCase()}(url`;
+        if (bodyValue) python += `, json=${bodyValue}`;
+        python += `)\nprint(response.json())`;
+        snippetBox.querySelector('.python-code').textContent = python;
+
+        snippetBox.style.display = 'block';
+        showToast('CODE GENERATED', 'success');
+    } else {
+        snippetBox.style.display = 'none';
+    }
+}
+
+function switchSnippet(btn, type) {
+    const box = btn.closest('.snippet-box');
+    box.querySelectorAll('.snippet-tab').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    box.querySelectorAll('.snippet-content pre').forEach(p => p.style.display = 'none');
+    box.querySelector(`.${type}-code`).style.display = 'block';
+}
+
+function downloadSpec() {
+    const server = document.getElementById('server-select').value;
+    const url = server.endsWith('/') ? server + 'docs/json' : server + '/docs/json';
+    fetch(url).then(res => res.blob()).then(blob => {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = 'openapi-spec.json';
+        a.click();
+        showToast('SPEC DOWNLOADED', 'success');
+    }).catch(() => showToast('DOWNLOAD FAILED', 'error'));
 }
 
 initPortal();
