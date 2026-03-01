@@ -335,8 +335,24 @@ function renderParams(params) {
 }
 
 function toggle(el) {
-    el.classList.toggle('active');
-    el.nextElementSibling.classList.toggle('active');
+    const isNowActive = el.classList.contains('active');
+
+    // Close all other open endpoints
+    document.querySelectorAll('.op-sum.active').forEach(openSum => {
+        if (openSum !== el) {
+            openSum.classList.remove('active');
+            openSum.nextElementSibling.classList.remove('active');
+        }
+    });
+
+    // Toggle the clicked one
+    if (!isNowActive) {
+        el.classList.add('active');
+        el.nextElementSibling.classList.add('active');
+    } else {
+        el.classList.remove('active');
+        el.nextElementSibling.classList.remove('active');
+    }
 }
 
 function filterEndpoints(query) {
