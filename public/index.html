@@ -18,10 +18,6 @@
             <div class="header-meta">
                 <span class="badge rate-limit-status" style="background: var(--yellow); color: var(--black);">RATE
                     LIMIT: ...</span>
-                <span class="badge oas-badge">v1.0.0</span>
-                <button class="docs-link" onclick="downloadSpec()"
-                    style="background: var(--yellow); color: var(--black); cursor: pointer; border: 4px solid var(--black); box-shadow: 4px 4px 0 var(--black);">DOWNLOAD
-                    SPEC</button>
                 <span class="badge online">ONLINE</span>
             </div>
         </div>
@@ -29,7 +25,12 @@
         <div class="info-box">
             <h1>NEO-SWAGGER PORTAL</h1>
             <p>About Simple and easy to use API. ⭐️ Star to support our work!</p>
-            <a href="/docs" class="docs-link">VIEW /docs</a>
+            <div class="header-meta" style="margin-top: 1.5rem; justify-content: center;">
+                <span class="badge oas-badge">v1.0.0</span>
+                <button class="docs-link" onclick="downloadSpec()"
+                    style="background: var(--yellow); color: var(--black); cursor: pointer;">DOWNLOAD SPEC</button>
+                <a href="/docs" class="docs-link">VIEW /docs</a>
+            </div>
         </div>
 
         <div class="servers-box">
