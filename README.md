@@ -140,6 +140,24 @@ API/
 
 ---
 
+---
+
+## SARAN & KONTRIBUSI
+
+Punya saran atau fitur baru? Kami sangat terbuka!
+
+- Buka **[Issues](https://github.com/yemo-dev/API/issues)** untuk memberikan saran atau melaporkan bug.
+- Pastikan saran Anda jelas dan detail.
+- Kontribusi kode sangat dipersilakan lewat Pull Request!
+
+---
+
+## LICENSE
+
+Proyek ini dilisensikan di bawah **MIT License**. Lihat file [LICENSE](LICENSE) untuk detail selengkapnya.
+
+---
+
 <p align="center">
   <b>Built by YeMo Dev</b>
 </p>
