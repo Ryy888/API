@@ -76,6 +76,7 @@ function handleHashRoute() {
             targetBlock.scrollIntoView({ behavior: 'smooth', block: 'start' });
             targetBlock.style.transition = '0.3s';
             targetBlock.style.boxShadow = '0 0 15px var(--cyan)';
+            showToast(`Link Opened: ${pathPart}`, 'success');
             setTimeout(() => {
                 targetBlock.style.boxShadow = '6px 6px 0px var(--black)';
             }, 1000);
@@ -101,8 +102,17 @@ function showToast(message, type = 'info') {
     }
 
     const toast = document.createElement('div');
-    toast.style.background = type === 'error' ? 'var(--red)' : 'var(--black)';
-    toast.style.color = type === 'error' ? 'var(--white)' : 'var(--yellow)';
+    if (type === 'error') {
+        toast.style.background = 'var(--red)';
+        toast.style.color = 'var(--white)';
+    } else if (type === 'success') {
+        toast.style.background = 'var(--green)';
+        toast.style.color = 'var(--black)';
+    } else {
+        toast.style.background = 'var(--black)';
+        toast.style.color = 'var(--yellow)';
+    }
+
     toast.style.padding = '15px 20px';
     toast.style.border = '4px solid var(--black)';
     toast.style.boxShadow = '6px 6px 0 var(--black)';
@@ -191,7 +201,7 @@ function renderEndpoints(paths) {
                             </div>
                             <div class="response-box" style="position: relative;">
                                 <div class="res-header">JSON RESPONSE</div>
-                                <button class="copy-btn" onclick="copyResponse(this)" style="position: absolute; top: 10px; right: 10px; background: var(--black); color: var(--yellow); border: 2px solid var(--black); padding: 5px 10px; font-size: 0.8rem; font-weight: 800; cursor: pointer; box-shadow: 2px 2px 0 var(--magenta); text-transform: uppercase;">Copy</button>
+                                <button class="copy-btn" onclick="copyResponse(this)" style="position: absolute; top: 10px; right: 10px; background: var(--cyan); color: var(--black); border: 2px solid var(--black); padding: 5px 10px; font-size: 0.8rem; font-weight: 800; cursor: pointer; box-shadow: 2px 2px 0 var(--magenta); text-transform: uppercase;">Copy</button>
                                 <a href="${path}" target="_blank" class="direct-link">${method.toUpperCase()} ${path.toUpperCase()}</a>
                                 <pre></pre>
                             </div>
@@ -348,8 +358,8 @@ function copyResponse(btn) {
             btn.style.boxShadow = '2px 2px 0 var(--yellow)';
             setTimeout(() => {
                 btn.textContent = originalText;
-                btn.style.background = 'var(--black)';
-                btn.style.color = 'var(--yellow)';
+                btn.style.background = 'var(--cyan)';
+                btn.style.color = 'var(--black)';
                 btn.style.boxShadow = '2px 2px 0 var(--magenta)';
             }, 2000);
         }).catch(err => {
