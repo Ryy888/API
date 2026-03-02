@@ -4,7 +4,7 @@ import mime from 'mime-types'
 
 export const blueArchiveRandomRoute = createRoute({
     method: 'get',
-    path: '/api/ba/blue-archive',
+    path: '/api/ba',
     tags: ['random'],
     description: 'Get a random Blue Archive media asset directly as a buffer',
     'x-status': 'ONLINE',
