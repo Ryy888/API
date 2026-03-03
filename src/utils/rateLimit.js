@@ -5,8 +5,8 @@ const clients = new Map()
 const config = {
     windowMs: 10 * 60 * 1000,
     max: 100,
-    whitelist: [],
-    banList: ['127.0.0.1']
+    whitelist: ['127.0.0.1', '::1', '::ffff:127.0.0.1'],
+    banList: ['']
 }
 
 export const rateLimiter = () => {
