@@ -17,12 +17,21 @@ export const rateLimiter = () => {
             '127.0.0.1'
 
         if (config.banList.includes(ip)) {
-            return c.json({
-                success: false,
-                status: 403,
-                error: 'Forbidden',
-                message: 'Your IP has been banned from accessing this API.'
-            }, 403)
+            if (c.req.path.startsWith('/api/') || c.req.header('accept')?.includes('json')) {
+                return c.json({
+                    success: false,
+                    status: 403,
+                    error: 'Forbidden',
+                    message: 'Your IP has been banned from accessing this API.'
+                }, 403)
+            }
+
+            try {
+                const html = await readFile('./page/status/403.html', 'utf8')
+                return c.html(html, 403)
+            } catch (e) {
+                return c.text('403 Forbidden', 403)
+            }
         }
 
         if (config.whitelist.includes(ip)) {

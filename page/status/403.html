@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>403 - ACCESS DENIED</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;700;900&family=JetBrains+Mono:wght@800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #FFEE00;
+            --black: #000000;
+            --white: #FFFFFF;
+            --magenta: #FF00FF;
+            --purple: #B24BF3;
+            --cyan: #00F0FF;
+            --red: #FF0055;
+
+            --main-color: var(--red);
+            --shadow-color: var(--black);
+            --accent-color: var(--yellow);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--black);
+            color: var(--white);
+            font-family: 'Space Grotesk', sans-serif;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            perspective: 1000px;
+        }
+
+        .container {
+            text-align: center;
+            padding: 2rem;
+            border: 10px solid var(--white);
+            background: var(--main-color);
+            box-shadow: 20px 20px 0px var(--accent-color);
+            transform: rotate(-2deg);
+            max-width: 90%;
+            width: 600px;
+            position: relative;
+            animation: entry 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+
+        @keyframes entry {
+            0% {
+                transform: scale(0) rotate(-20deg);
+                opacity: 0;
+            }
+
+            100% {
+                transform: scale(1) rotate(-2deg);
+                opacity: 1;
+            }
+        }
+
+        h1 {
+            font-size: clamp(4rem, 15vw, 8rem);
+            font-weight: 900;
+            line-height: 0.8;
+            margin-bottom: 1.5rem;
+            letter-spacing: -5px;
+            text-shadow: 6px 6px 0px var(--black);
+            text-transform: uppercase;
+        }
+
+        .glitch-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        .glitch-text::before,
+        .glitch-text::after {
+            content: "403";
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: var(--main-color);
+        }
+
+        .glitch-text::before {
+            left: 3px;
+            text-shadow: -3px 0 var(--cyan);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-1 5s infinite linear alternate-reverse;
+        }
+
+        .glitch-text::after {
+            left: -3px;
+            text-shadow: -3px 0 var(--magenta);
+            clip: rect(44px, 450px, 56px, 0);
+            animation: glitch-2 5s infinite linear alternate-reverse;
+        }
+
+        @keyframes glitch-1 {
+            0% {
+                clip: rect(20px, 9999px, 86px, 0);
+            }
+
+            20% {
+                clip: rect(61px, 9999px, 30px, 0);
+            }
+
+            40% {
+                clip: rect(96px, 9999px, 73px, 0);
+            }
+
+            60% {
+                clip: rect(13px, 9999px, 47px, 0);
+            }
+
+            80% {
+                clip: rect(78px, 9999px, 91px, 0);
+            }
+
+            100% {
+                clip: rect(54px, 9999px, 22px, 0);
+            }
+        }
+
+        @keyframes glitch-2 {
+            0% {
+                clip: rect(31px, 9999px, 42px, 0);
+            }
+
+            20% {
+                clip: rect(82px, 9999px, 14px, 0);
+            }
+
+            40% {
+                clip: rect(15px, 9999px, 68px, 0);
+            }
+
+            60% {
+                clip: rect(72px, 9999px, 29px, 0);
+            }
+
+            80% {
+                clip: rect(46px, 9999px, 95px, 0);
+            }
+
+            100% {
+                clip: rect(9px, 9999px, 53px, 0);
+            }
+        }
+
+        p {
+            font-size: clamp(1rem, 3vw, 1.5rem);
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-bottom: 2rem;
+            background: var(--black);
+            display: inline-block;
+            padding: 5px 15px;
+            transform: rotate(1deg);
+        }
+
+        .status-code {
+            font-family: 'JetBrains Mono', monospace;
+            background: var(--white);
+            color: var(--black);
+            padding: 10px 20px;
+            font-size: 1.2rem;
+            font-weight: 800;
+            display: block;
+            margin: 0 auto 2rem;
+            width: fit-content;
+            box-shadow: 6px 6px 0px var(--black);
+        }
+
+        .back-btn {
+            display: inline-block;
+            background: var(--white);
+            color: var(--black);
+            text-decoration: none;
+            padding: 15px 30px;
+            font-weight: 900;
+            text-transform: uppercase;
+            border: 4px solid var(--black);
+            box-shadow: 8px 8px 0px var(--black);
+            transition: 0.1s;
+            cursor: pointer;
+        }
+
+        .back-btn:hover {
+            transform: translate(-4px, -4px);
+            box-shadow: 12px 12px 0px var(--black);
+            background: var(--yellow);
+        }
+
+        .back-btn:active {
+            transform: translate(2px, 2px);
+            box-shadow: 4px 4px 0px var(--black);
+        }
+
+        .decor {
+            position: absolute;
+            font-weight: 900;
+            font-size: 5rem;
+            opacity: 0.2;
+            z-index: -1;
+            user-select: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="decor" style="top: 10%; left: 10%;">403</div>
+    <div class="decor" style="bottom: 10%; right: 10%;">403</div>
+
+    <div class="container">
+        <div class="glitch-wrapper">
+            <h1 class="glitch-text">403</h1>
+        </div>
+        <div class="status-code">FORBIDDEN: IP_BANNED</div>
+        <p>ACCESS DENIED BY SYSTEM</p>
+        <br>
+        <a href="/" class="back-btn">RETURN TO SAFETY</a>
+    </div>
+
+    <script>
+        document.addEventListener('mousemove', (e) => {
+            const container = document.querySelector('.container');
+            const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
+            const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
+            container.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg) rotate(-2deg)`;
+        });
+    </script>
+</body>
+
+</html>
