@@ -1,73 +1,87 @@
-# MiuuAPI Infrastructure
+<div align="center">
+  <h1>MiuuAPI Infrastructure</h1>
+  <p>A high-performance, modular API gateway and server infrastructure built for modern web services.</p>
 
-MiuuAPI is a high-performance, modular API gateway and server infrastructure built on Node.js and the Hono framework. It provides a robust foundation for building scalable web services with built-in security, documentation, and monitoring.
+  <p><strong>Technologies and Tools:</strong></p>
+  <img src="https://skillicons.dev/icons?i=js,nodejs,npm,git,github,vscode,windows&theme=dark" />
+</div>
 
-## Core Features
+<hr />
 
-- **High-Performance Routing**: Optimized for low-latency request handling.
-- **Automated Documentation**: Integrated Scalar API Reference with a modern dark theme and secure authorization.
-- **Security-First Architecture**: Per-client API key authentication with granular rate limiting and IP-based access control.
-- **System Resilience**: Built-in process synchronization and automatic port management for development and production environments.
-- **Real-Time Monitoring**: Detailed system statistics and authentication status tracking.
+## Overview
 
-## Technical Architecture
+MiuuAPI is engineered for scalability and security. Leveraging the Hono framework and Node.js runtime, it provides a robust foundation with integrated OpenAPI documentation, multi-core processing, and advanced security layers.
 
-The project follows a clean, modular architecture:
-- **configs/**: Centralized application settings and security definitions.
-- **middlewares/**: Request processing pipeline including rate limiting, logging, and data formatting.
-- **routes/**: Declarative API endpoint definitions using OpenAPI specifications.
-- **utils/**: Core system utilities for logging and terminal formatting.
+## Technical Specifications
 
-## Installation and Deployment
+| Feature | Description |
+| :--- | :--- |
+| **Framework** | Hono (Ultra-fast web framework for Node.js) |
+| **Documentation** | Scalar API Reference (OpenAPI 3.1.0) |
+| **Validation** | Zod (Schema-first validation and documentation) |
+| **Runtime** | Node.js (Standardized for high-concurrency environments) |
+| **Authentication** | API Key Security with granular permission levels |
+
+## Core Components
+
+### Security and Rate Limiting
+The system implements a multi-layered security strategy:
+- **Per-Key Rate Limiting**: Customizable request thresholds per API Key.
+- **Dynamic Identification**: Accurate client identification using Cloudflare-transparent IP detection.
+- **Cluster Synchronization**: Seamless rate limit tracking across multiple CPU cores via Master-Worker IPC.
+- **IP Access Control**: Integrated blacklist support for immediate IP-based blocking.
+
+### Documentation Portal
+An interactive API reference is served at the root URL, featuring:
+- **Dark Mode Architecture**: Optimized for developer accessibility.
+- **Integrated Auth Testing**: Direct API Key authorization and request testing.
+- **Conditional Visibility**: Intelligent UI protection that masks sensitive features on public domains while remaining fully accessible on localhost.
+
+### System Monitoring
+Built-in endpoints provide real-time visibility:
+- **System Metrics**: Monitoring CPU load, memory utilization (RSS/Heap), and OS-level statistics.
+- **Authentication Status**: Dynamic tracking of API Key usage, remaining quotas, and reset intervals.
+
+## Getting Started
 
 ### Prerequisites
-- Node.js (version 20 or higher)
-- npm or yarn
+Ensure Node.js 20 or higher is installed in your environment.
 
-### Setup
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/miuubyte/API.git
-   cd API
-   npm install
-   ```
+### Setup Instructions
+```bash
+# Clone the repository
+git clone https://github.com/miuubyte/API.git
 
-### Running the Application
-To start the server in a development environment with hot-reloading:
+# Navigate to project directory
+cd API
+
+# Install dependencies
+npm install
+```
+
+### Execution
+For local development with hot-reloading:
 ```bash
 npm run dev
 ```
 
-To deploy in a production environment:
+For production deployment:
 ```bash
 npm start
 ```
 
-## Configuration
+## Configuration Interface
 
-### API Key Management
-Authentication is managed via `src/configs/apiKeys.js`. You can define custom limits and window durations for individual clients. Setting the limit to `0` enables unlimited access.
+### Global Application Settings
+Primary configurations are centralized in `src/configs/app.js`, including port definitions and documentation metadata.
 
-Example configuration:
-```javascript
-export const apiKeys = [
-    {
-        name: 'Internal Admin',
-        key: 'your_secret_key',
-        limit: 0,
-        windowMs: 600000
-    }
-]
-```
+### API Key Definitions
+Manage authentication keys in `src/configs/apiKeys.js`. 
+- Set `limit: 0` for unlimited throughput.
+- Configure `windowMs` to define the duration of the rate limit cycle.
 
-### Rate Limiting
-The system implements a sophisticated rate limiter that supports Cloudflare-transparent IP detection and master-worker synchronization in cluster mode.
-
-## API Documentation
-The interactive documentation portal is accessible at the root URL of the server. It provides a comprehensive overview of all available endpoints, including request/response schemas and testing tools.
-
-## Development and Contributions
-The codebase is maintained with a strict "clean code" policy. All system logic is documented within this README to ensure the source code remains focused and efficient.
-
-## License
-This project is licensed under the MIT License. Developed and maintained by the Miuu project team.
+## Project Structure
+- `configs/`: Centralized settings and security definitions.
+- `middlewares/`: Request processing pipeline (logging, rate limiting, formatting).
+- `routes/`: Declarative API endpoint definitions.
+- `utils/`: Core system utilities for terminal logging and formatting.
