@@ -19,6 +19,15 @@ import { buildBrandingScript } from './utils/portalCustoms.js'
 
 const port = appConfig.port
 
+const minNodeVersion = 20
+const currentVersion = parseInt(process.versions.node.split('.')[0])
+
+if (currentVersion < minNodeVersion) {
+    logger.error(`Node.js version ${process.versions.node} is not supported.`)
+    logger.error(`MiuuAPI requires Node.js v${minNodeVersion} or higher to run.`)
+    process.exit(1)
+}
+
 const killPort = () => {
     try {
         if (platform() === 'win32') {
