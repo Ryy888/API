@@ -136,7 +136,7 @@ export function buildBrandingScript() {
               '.miuu-nav-link:hover { background: var(--scalar-background-2); color: var(--scalar-color-1); } ' +
               '.ask-agent-scalar-input-label, .scalar-ask-ai, form:has(.ask-agent-scalar-input-label), form:has(button[type="submit"]), button.bg-sidebar-b-search, .search-button, button[aria-label*="Ask AI"] { display: none !important; } ' +
               '.scalar-mcp-layer, .scalar-mcp-platform-item, [class*="scalar-mcp"], .references-developer-tools, [class*="developer-tools"], a[href*="scalar.com/share"], button[id*="deploy"], button[id*="configure"], .menu-item[data-title="Deploy"], .menu-item[data-title="Share"], .menu-item[data-title="Configure"], a[href*="scalar.com"] { display: none !important; } ' +
-              'section[data-testid="section-introduction"], .introduction { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 40px !important; max-width: 1100px !important; margin: 0 auto !important; padding: 40px 20px !important; position: relative; overflow: visible !important; width: 100% !important; box-sizing: border-box !important; } ' +
+              'section[data-testid="section-introduction"], .introduction { display: flex !important; flex-direction: row !important; align-items: center !important; gap: 40px !important; max-width: 1100px !important; margin: 0 auto !important; padding: 40px 20px !important; position: relative; overflow: hidden !important; width: 100% !important; box-sizing: border-box !important; } ' +
               'section[data-testid="section-introduction"] h1, .introduction h1 { font-size: 42px !important; font-weight: 800 !important; margin-bottom: 12px !important; color: var(--scalar-color-1) !important; position: relative; z-index: 10; word-break: break-word; } ' +
               '.dark-mode section[data-testid="section-introduction"] h1, .dark-mode .introduction h1 { background: linear-gradient(135deg, #fff 0%, #ff0000 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; } ' +
               'section[data-testid="section-introduction"] > div:first-child, .introduction > div:first-child { flex: 1.2 !important; position: relative; z-index: 10; width: 100% !important; } ' +
@@ -144,12 +144,15 @@ export function buildBrandingScript() {
               '.miuu-intro-banner { width: 100%; max-width: 480px; aspect-ratio: 16/9; border-radius: 20px; object-fit: cover; transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), box-shadow 0.6s ease; transform: rotateY(-18deg) rotateX(6deg) rotateZ(-1deg) translate3d(0,0,0); transform-style: preserve-3d; box-shadow: 20px 20px 50px rgba(0,0,0,0.15); border: 1px solid var(--scalar-border-color); z-index: 5; position: relative; cursor: pointer; } ' +
               '.miuu-intro-banner:hover, .miuu-intro-banner.active { transform: rotateY(-4deg) rotateX(2deg) rotateZ(0deg) scale(1.05) translateY(-10px) translate3d(0,0,0) !important; box-shadow: 0 40px 80px rgba(255,0,0,0.2) !important; } ' +
               '@media (max-width: 1000px) { ' +
-                'section[data-testid="section-introduction"], .introduction { flex-direction: column !important; text-align: left !important; padding: 20px 15px !important; box-sizing: border-box !important; overflow-x: hidden !important; gap: 20px !important; width: 100% !important; margin: 0 !important; } ' +
+                'html, body { overflow-x: hidden !important; position: relative !important; width: 100% !important; } ' +
+                '.scalar-api-reference { overflow-x: hidden !important; } ' +
+                'section[data-testid="section-introduction"], .introduction { flex-direction: column !important; text-align: left !important; padding: 20px 15px !important; box-sizing: border-box !important; overflow: hidden !important; gap: 20px !important; width: 100% !important; margin: 0 !important; } ' +
                 'section[data-testid="section-introduction"] > div:first-child, .introduction > div:first-child { text-align: left !important; flex: none !important; width: 100% !important; } ' +
                 'section[data-testid="section-introduction"] h1, .introduction h1 { font-size: 32px !important; line-height: 1.2 !important; text-align: left !important; margin: 0 0 12px !important; display: block !important; } ' +
                 '.miuu-banner-wrapper { justify-content: center !important; width: 100% !important; margin-top: 10px !important; perspective: 1000px !important; flex: none !important; } ' +
                 '.miuu-intro-banner { transform: rotateY(-8deg) rotateX(3deg) translate3d(0,0,0); max-width: 100% !important; margin: 0 auto !important; box-shadow: 10px 10px 30px rgba(0,0,0,0.2); } ' +
                 '.miuu-shape { transform: scale(0.4) translate3d(0,0,0); } ' +
+                '.scalar-api-references-standalone-mobile { position: fixed !important; top: 0; left: 0; z-index: 1000 !important; } ' +
               '}';
     
         var style = document.createElement('style');
@@ -175,8 +178,9 @@ export function buildBrandingScript() {
                     }
                 });
 
-                var introText = Array.from(document.querySelectorAll('span, p')).find(function(el) { 
-                    return el.innerText.includes('A simple and easy to use API') || el.innerText.includes('Star to support our work'); 
+                var introText = Array.from(document.querySelectorAll('span, p, h1, h2')).find(function(el) { 
+                    var t = el.innerText || '';
+                    return t.includes('A simple and easy to use API') || t.includes('Star to support our work') || t.includes('Introduction') || t.includes('MiuuAPI'); 
                 });
                 
                 if (introText && !document.querySelector('.miuu-intro-banner')) {

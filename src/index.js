@@ -109,11 +109,16 @@ if (isCluster && cluster.isPrimary) {
         allowHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining', 'x-api-key', 'Authorization', 'Content-Type'],
         exposeHeaders: ['X-RateLimit-Limit', 'X-RateLimit-Remaining']
     }))
+    app.use('/assets/*', serveStatic({ 
+        root: './src/public',
+        rewriteRequestPath: (path) => path.replace(/^\/assets/, '')
+    }))
+    app.use('/favicon.png', serveStatic({ path: './src/public/favicon.png' }))
+    app.use('/favicon.ico', serveStatic({ path: './src/public/favicon.png' }))
+
     app.use('*', logApiRequest)
     app.use('*', prettyPrint)
     app.use('*', rateLimiter())
-    app.use('/assets/*', serveStatic({ root: './src/public' }))
-    app.use('/favicon.png', serveStatic({ path: './src/public/favicon.png' }))
 
     setupRoutes(app)
 
